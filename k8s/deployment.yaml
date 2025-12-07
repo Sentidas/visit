@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: country-app
+      annotations:
+        version: "${ci_commit_sha}"
     spec:
       containers:
         - name: country-app

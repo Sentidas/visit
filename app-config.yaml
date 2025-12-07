@@ -1,0 +1,165 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  creationTimestamp: "2025-12-07T20:19:11Z"
+  generation: 62
+  name: country-service
+  namespace: argocd
+  resourceVersion: "26853"
+  uid: 5f77083d-f6e0-4c3f-ba9e-f714fd91fb95
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: k8s
+    repoURL: https://github.com/Sentidas/visit
+    targetRevision: HEAD
+status:
+  controllerNamespace: argocd
+  health:
+    lastTransitionTime: "2025-12-07T21:32:41Z"
+    status: Healthy
+  history:
+  - deployStartedAt: "2025-12-07T20:20:13Z"
+    deployedAt: "2025-12-07T20:20:18Z"
+    id: 0
+    initiatedBy:
+      username: admin
+    revision: 8a9ec2e47ff7c08c2653fb6f086f74104d90f303
+    source:
+      path: k8s
+      repoURL: https://github.com/Sentidas/visit
+      targetRevision: HEAD
+  - deployStartedAt: "2025-12-07T21:32:32Z"
+    deployedAt: "2025-12-07T21:32:37Z"
+    id: 1
+    initiatedBy:
+      username: admin
+    revision: ca26b23f074b2f7a367300fc4f19d4f21b643bda
+    source:
+      path: k8s
+      repoURL: https://github.com/Sentidas/visit
+      targetRevision: HEAD
+  operationState:
+    finishedAt: "2025-12-07T21:32:37Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        username: admin
+      retry: {}
+      sync:
+        prune: true
+        revision: ca26b23f074b2f7a367300fc4f19d4f21b643bda
+        source:
+          path: k8s
+          repoURL: https://github.com/Sentidas/visit
+          targetRevision: HEAD
+        syncStrategy:
+          hook: {}
+    phase: Succeeded
+    startedAt: "2025-12-07T21:32:32Z"
+    syncResult:
+      resources:
+      - group: ""
+        hookPhase: Running
+        kind: PersistentVolumeClaim
+        message: persistentvolumeclaim/mysql-pvc unchanged
+        name: mysql-pvc
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/country-db unchanged
+        name: country-db
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/country-service unchanged
+        name: country-service
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - mysql:8.0
+        kind: Deployment
+        message: deployment.apps/mysql unchanged
+        name: mysql
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - sentidas1/country-service:b6fa4ef682cce30a56793e93d765a0b2d1081104
+        kind: Deployment
+        message: deployment.apps/country-app created
+        name: country-app
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: ca26b23f074b2f7a367300fc4f19d4f21b643bda
+      source:
+        path: k8s
+        repoURL: https://github.com/Sentidas/visit
+        targetRevision: HEAD
+  reconciledAt: "2025-12-07T21:32:41Z"
+  resourceHealthSource: appTree
+  resources:
+  - kind: PersistentVolumeClaim
+    name: mysql-pvc
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: country-db
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: country-service
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: country-app
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: mysql
+    namespace: default
+    status: Synced
+    version: v1
+  sourceHydrator: {}
+  sourceType: Directory
+  summary:
+    images:
+    - mysql:8.0
+    - sentidas1/country-service:b6fa4ef682cce30a56793e93d765a0b2d1081104
+  sync:
+    comparedTo:
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      source:
+        path: k8s
+        repoURL: https://github.com/Sentidas/visit
+        targetRevision: HEAD
+    revision: ca26b23f074b2f7a367300fc4f19d4f21b643bda
+    status: Synced
