@@ -10,10 +10,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # - права на запись
+    permissions:
+      contents: write
 
     steps:
       # Получение кода
       - uses: actions/checkout@v4
+        # Позволяет workflow делать коммиты и пуши
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
 
       # Установка Java
       - uses: actions/setup-java@v4
@@ -38,6 +45,17 @@ jobs:
       # Сборка Docker образа
       - run: docker build -t ${{ env.IMAGE_TAG }} -f country/Dockerfile .
 
+        # Обновление K8s манифестов в Git
+      - name: Update K8s manifests with new image tag
+        run: |
+                 sed -i "s|image: sentidas1/country-service:.*|image: ${{ env.IMAGE_TAG }}|g" k8s/*.yaml
+                 
+                 git config user.name "GitHub Actions"
+                 git config user.email "actions@github.com"
+                 git add k8s/
+                 git commit -m "Update image to ${{ github.sha }}"
+                 git push
+
       # Создание override файла
       - run: |
           cat > docker-compose.override.yml << EOF
@@ -56,4 +74,3 @@ jobs:
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker push ${{ env.IMAGE_TAG }}
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
