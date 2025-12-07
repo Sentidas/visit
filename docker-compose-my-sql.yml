@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  country-db:
+    container_name: country-db
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: country
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Europe/Moscow
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+    ports:
+      - 3306:3306
+    networks:
+      - country-network
+
+  country-app:
+    container_name: country-app
+    build:
+      context: .
+      dockerfile: country/Dockerfile
+    ports:
+      - "8088:8088"
+    restart: always
+    depends_on:
+      country-db:
+        condition: service_healthy
+    networks:
+      - country-network
+
+networks:
+  country-network:
+    driver: bridge

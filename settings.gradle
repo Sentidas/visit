@@ -1,0 +1,4 @@
+rootProject.name = 'visit2'
+include 'country'
+include 'tests-e2e'
+

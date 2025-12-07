@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: country-app
+  labels:
+    app: country
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: country
+  template:
+    metadata:
+      labels:
+        app: country
+    spec:
+      containers:
+        - name: country-app
+          image: country-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8088
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
