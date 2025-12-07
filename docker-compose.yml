@@ -33,19 +33,6 @@ services:
     networks:
       - country-network
 
-
-  country-tests:
-    container_name: country-tests
-    build:
-      context: .
-      dockerfile: tests-e2e/Dockerfile
-
-    command: ["../gradlew", "clean", "test", "allureReport"]
-    depends_on:
-      - country-app
-    networks:
-      - country-network
-
 networks:
   country-network:
     driver: bridge
