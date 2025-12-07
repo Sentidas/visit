@@ -43,3 +43,8 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+bootJar {
+    // Задаем фиксированное имя для JAR-файла
+    // Это упрощает работу в Dockerfile и CI/CD
+    archiveFileName = 'app.jar'
+}
