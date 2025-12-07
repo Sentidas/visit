@@ -16,8 +16,6 @@ import ru.sentidas.country.data.repository.VisitRepository;
 import ru.sentidas.country.ex.BadRequestException;
 import ru.sentidas.country.ex.UserNotFoundException;
 import ru.sentidas.country.ex.VisitNotFoundException;
-import ru.sentidas.country.model.Country;
-import ru.sentidas.country.model.CountyRating;
 import ru.sentidas.country.model.Visit;
 import ru.sentidas.country.model.VisitUpdate;
 
@@ -75,8 +73,8 @@ public class VisitService {
 
     @Transactional
     public Visit add(Visit visitJson) {
-        if (visitJson.rating() < 1 || visitJson.rating() > 10) {
-            throw new BadRequestException("Rating must be between 1 and 10");
+        if (visitJson.rating() < 1 || visitJson.rating() > 100) {
+            throw new BadRequestException("Rating must be between 1 and 100");
         }
 
         if (!userRepository.existsById(visitJson.userId())) {
