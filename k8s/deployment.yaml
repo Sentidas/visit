@@ -3,21 +3,20 @@ kind: Deployment
 metadata:
   name: country-app
   labels:
-    app: country
+    app: country-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: country
+      app: country-app
   template:
     metadata:
       labels:
-        app: country
+        app: country-app
     spec:
       containers:
         - name: country-app
-          image: country-app:latest
-          imagePullPolicy: Never
+          image: sentidas1/country-service:latest
           ports:
             - containerPort: 8088
           resources:
