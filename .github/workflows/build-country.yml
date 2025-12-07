@@ -2,10 +2,9 @@ name: Build Country Service
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-
+    branches: [main]
 
 jobs:
   build:
@@ -23,11 +22,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-            # Шаг 3: Даем права на выполнение gradlew
+      # Шаг 3: Даем права на выполнение gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Шаг 3: Кэширование Gradle зависимостей
+      # Шаг 4: Кэширование Gradle зависимостей
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
@@ -38,24 +37,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Шаг 4: Сборка микросервиса country
+      # Шаг 5: Сборка микросервиса country
       - name: Build country service
         run: |
           ./gradlew :country:clean :country:build
 
-      # Шаг 5: Проверка созданного JAR-файла
+      # Шаг 6: Проверка созданного JAR-файла
       - name: Verify JAR file
         run: |
           ls -la country/build/libs/
           echo "JAR файл создан"
 
-      # Шаг 6: Сборка Docker-образа
-      - name: Build Docker image
-        run: |
-          cd country
-          docker build -t country-service:${{ github.sha }} .
-
-      # Шаг 7: Тестирование Docker-образа
       # Шаг 7: Сборка Docker-образа
       - name: Build Docker image
         run: |
@@ -72,37 +64,29 @@ jobs:
           name: country-service-docker-image
           path: country-service-image.tar
 
-      # Шаг 9: Базовое тестирование Docker-образа
+      # Шаг 9: Базовое тестирование Docker-образа (исправленная версия)
       - name: Test Docker image
         run: |
-          # Запускаем контейнер в фоновом режиме с тестовым профилем
+          # Запускаем контейнер в фоновом режиме с выводом логов
           docker run -d \
             --name country-test \
-            -e SPRING_PROFILES_ACTIVE=test \
+            -e SPRING_PROFILES_ACTIVE=docker \
             -p 8080:8080 \
             country-service:${{ github.sha }}
-
-          # Ждем запуска приложения
-          sleep 20
-
-          # Проверяем, что контейнер работает
-          docker ps | grep country-test
-
-          # Пробуем сделать HTTP запрос к health endpoint
-          curl --retry 5 --retry-delay 5 --retry-max-time 30 \
-            http://localhost:8080/actuator/health || echo "Health check failed"
-
+          
+          # Ждем запуска приложения и проверяем логи
+          sleep 10
+          
+          # Проверяем, что контейнер все еще работает
+          if docker ps --filter "name=country-test" --format "table {{.Names}}\t{{.Status}}" | grep -q "country-test"; then
+            echo "Контейнер запущен, проверяем логи..."
+            docker logs country-test --tail 20
+          else
+            echo "Контейнер завершился, выводим логи для диагностики:"
+            docker logs country-test
+            exit 1
+          fi
+          
           # Останавливаем контейнер
           docker stop country-test
           docker rm country-test
-
-      # Шаг 10: Запуск тестовой базы данных (опционально)
-      - name: Start test database
-        run: |
-              docker run -d \
-                --name test-mysql \
-                -e MYSQL_ROOT_PASSWORD=test \
-                -e MYSQL_DATABASE=country_test \
-                -p 3306:3306 \
-                mysql:8.0
-              sleep 30
