@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: country-app
-          image: sentidas1/country-service:2a67b155be5946ab046084e9ce5a01118b45b114
+          image: sentidas1/country-service:58d3a2b4bfbbc8da4e16c199becb684c81960bbd
           ports:
             - containerPort: 8088
           resources:
