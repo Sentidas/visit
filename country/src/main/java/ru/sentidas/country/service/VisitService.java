@@ -105,8 +105,8 @@ public class VisitService {
             entity.setArchived(visit.archived());
         }
         if (visit.rating() != null) {
-            if (visit.rating() < 1 || visit.rating() > 200) {
-                throw new BadRequestException("Rating must be between 1 and 200");
+            if (visit.rating() < 1 || visit.rating() > 300) {
+                throw new BadRequestException("Rating must be between 1 and 300");
             }
             entity.setRating(visit.rating());
         }
